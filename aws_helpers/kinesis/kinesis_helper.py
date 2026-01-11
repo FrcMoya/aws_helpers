@@ -2,10 +2,11 @@
 # Copyright (c) 2026 Fran Moya
 
 import hashlib
-import random
 import time
 import json
 import logging
+
+from aws_helpers.utils.retry import exponential_backoff_with_jitter
 
 
 class KinesisBatchWriter:
@@ -88,11 +89,6 @@ class KinesisBatchWriter:
                 f"  Total batches: {self._total_batches_sent}\n"
                 f"  Total bytes sent: {self._total_bytes_sent} bytes"
             )
-    
-    @staticmethod
-    def _backoff_with_jitter(attempt, base=0.25, cap=5.0):
-        max_delay = min(cap, base * (2 ** attempt))
-        return random.uniform(0, max_delay)
 
     def _send_batch(self):
         try:
@@ -106,7 +102,7 @@ class KinesisBatchWriter:
 
                 if tries > self._tries_to_wait:
                     self.logger.warning(f"Retrying to send {len(failed_records)} failed records after waiting.")
-                    time.sleep(self._backoff_with_jitter(tries))
+                    time.sleep(exponential_backoff_with_jitter(tries))
                 
                 response = self.kinesis_client.put_records(
                     Records=failed_records,
