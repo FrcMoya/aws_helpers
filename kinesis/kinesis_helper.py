@@ -136,4 +136,5 @@ class KinesisBatchWriter:
             self._total_bytes_to_send = 0
         
         except Exception:
-            self.logger.exception(f"Exception occurred while sending batch: {e}")
+            self.logger.exception(f"Exception occurred while sending batch to Kinesis")
+            
