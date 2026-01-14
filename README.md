@@ -39,8 +39,8 @@ import boto3
 client = boto3.client("kinesis")
 
 with KinesisBatchWriter(client, "my-stream") as writer:
-    write.put_record("hello world")
-    writer.put_record({"message": "hello world"})
+    writer.put_record("hello world")
+    writer.put_record({"key1": "hello world"})
 ```
 
 ## License
