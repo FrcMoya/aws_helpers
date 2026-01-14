@@ -2,9 +2,9 @@
 # Copyright (c) 2026 Fran Moya
 
 import hashlib
-import time
 import json
 import logging
+import time
 
 from aws_helpers.utils.retry import exponential_backoff_with_jitter
 
@@ -24,9 +24,12 @@ class KinesisBatchWriter:
         self._limit_bytes_per_record = 10485760  # 10 MB
         self._limit_bytes_per_batch = 10485760  # 10 MB
         self._limit_records_per_batch = 500
+
+        # Retry configuration
         self._max_tries = 10
         self._tries_to_wait = 5
 
+        # Internal state
         self._records_to_send = []
         self._total_bytes_to_send = 0
         self._total_bytes_sent = 0
